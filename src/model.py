@@ -1,5 +1,4 @@
 from gensim.models import KeyedVectors
-import numpy as np
 
 
 class WordVectorModel:
@@ -17,8 +16,9 @@ class WordVectorModel:
         s1 = self.get_sentence_vectors(s1)
         s2 = self.get_sentence_vectors(s2)
         s3 = self.get_sentence_vectors(s3)
-        s1_sum = np.sum(s1, axis=0)
-        s2_sum = np.sum(s2, axis=0)
-        s3_sum = np.sum(s3, axis=0)
-        predicted_word_vector = s2_sum - s1_sum + s3_sum
-        return self.model.most_similar(predicted_word_vector, topn=1)[0]
+        s1_sum = sum(s1)
+        s2_sum = sum(s2)
+        s3_sum = sum(s3)
+        predicted_word_vector = [s2_sum - s1_sum + s3_sum]
+        ms = self.model.most_similar(predicted_word_vector, topn=1)
+        return ms[0]

@@ -73,7 +73,7 @@ class AnalogyCalculator:
         print(s3)
         result = []
         for i in range(len(s1)):
-            result_word = self.model.predict_word([s1[i]], [s2[i]], [s3[i]])
+            result_word = self.model.predict_word(s1[i], s2[i], s3[i])
             result.append(result_word)
         return result
 
