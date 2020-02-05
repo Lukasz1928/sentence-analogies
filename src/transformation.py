@@ -15,6 +15,7 @@ class Transformation:
     def transform(self, s):
         #print('trying to transform: {} with {} -> {}'.format(s, self.left, self.right), end='')
         if self.matches(s):
+            #print(' OK')
             return self.left, self.right
         raise Exception("DUPA")
 

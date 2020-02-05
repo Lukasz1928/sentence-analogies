@@ -23,25 +23,20 @@ def main():
     # args = parse_args()
     # sentenceA, sentenceB, sentenceC = args
 
-    model = WordVectorModel()
+    model = None # WordVectorModel()
+    print('Model loaded')
     calculator = AnalogyCalculator(model)
-    analogy = calculator.find_analogy(' '.join(['You', 'will', 'see', 'the', 'man', 'next', 'week']), ' '.join(['I', 'saw', 'the', 'woman', 'last', 'week']),
-                            ' '.join(['You', 'will', 'meet', 'the', 'King', 'tomorrow']))
-    print(analogy)
+
     sentenceA = "You will see the man next week."
     sentenceB = "I saw the woman last week."
     sentenceC = "You will meet the King tomorrow."
 
-    #sentenceD = calculator.find_analogy(sentenceA, sentenceB, sentenceC)
-    #print(sentenceD)
+    a = "You saw the man last week."
+    b = "I will see the woman next week."
+    c = "You met the King yesterday."
 
-    #l1 = levenshtein(['You', 'will', 'see', 'the', 'man', 'next', 'week'], ['I', 'see', 'the', 'woman', 'this', 'week'], None)
-
-    # t1 = Trace.calculate_trace(['You', 'will', 'see', 'the', 'man', 'next', 'week'], ['I', 'saw', 'the', 'woman', 'last', 'week'], None)
-    # print(t1.edits)
-    # t2 = Trace.calculate_trace(['You', 'will', 'see', 'the', 'man', 'next', 'week'], ['You', 'will', 'meet', 'the', 'King', 'tomorrow'], None)
-    # print(t2.edits)
-    # print(l1)
+    sentenceD = calculator.find_analogy(a, b, c)
+    print(sentenceD)
 
 
 if __name__ == "__main__":

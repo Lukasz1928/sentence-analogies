@@ -3,10 +3,6 @@
 def levenshtein(s1, s2, model):
     rows = calculate_costs(s1, s2, model)
     edits, trace = backtrace(s1, s2, rows)
-    # for x in trace:
-    #     for y in x:
-    #         print('#' if y else ' ', end='')
-    #     print()
     return rows[-1][-1], edits, trace
 
 
@@ -42,7 +38,6 @@ def backtrace(s1, s2, rows):
             neighbors.append(rows[i][j - 1])
 
         min_cost = min(neighbors)
-        # print(neighbors)
 
         if min_cost == prev_cost:
             i, j = i - 1, j - 1
