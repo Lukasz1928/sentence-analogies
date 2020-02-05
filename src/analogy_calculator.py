@@ -18,61 +18,68 @@ class AnalogyCalculator:
         # vectors_c = self.model.get_sentence_vectors(c)
         # similarity_matrix = calculate_similarity_matrix(vectors_a, vectors_b)
         trace_ab = Trace.calculate_trace(a, b, self.model)
-        # for i in range(len(trace_ab.trace)):
-        #     for j in range(len(trace_ab.trace[i])):
-        #         print('#' if trace_ab.trace[i][j] else ' ', end='')
-        #     print('')
         trace_ac = Trace.calculate_trace(a, c, self.model)
         D_length = len(b) - len(a) + len(c)
         D = self._calculate_analogy(c, trace_ab, trace_ac, D_length)
         return D
 
     def _calculate_analogy(self, s3, trace1, trace2, expected_length):
-
         t1 = self._process_trace(trace1)
         t2 = self._process_trace(trace2, reverse=True)
-        s1, s2, s3 = self._transform_sentences(t1, t2, s3)
-        return self._compute_analogies(s1, s2, s3)
+        # print([str(t) for t in t1])
+        # print([str(t) for t in t2])
+        # print()
+        s1, s2, s3, adds = self._transform_sentences(t1, t2, s3)
+        # print(s1)
+        # print(s2)
+        # print(s3)
+        # exit()
+        return self._compute_analogies(s1, s2, s3, adds)
 
     def _transform_sentences(self, t1, t2, s3):
-        print('ts1')
-        print([str(x) for x in t2])
         d = self._transform_sentence(t2, s3)
-        print(d)
-        print([str(x) for x in t1])
-        print('ts2')
-        s2, x, s1 = self._transform_grouped_sentence(t1, d)
-        print('ts3')
+        s2, s1, prods = self._transform_grouped_sentence(t1, d)
+        print('s1: {}'.format(s1))
+        print('s2: {}'.format(s2))
+        print('prods: {}'.format([str(x) for x in prods]))
         s3 = self._get_first(t2, s1)
-        print('ts4')
-        return s1, s2, s3
+        print('s3: {}'.format(s3))
+        return s1, s2, s3, prods
 
-    def _compute_analogies(self, s1, s2, s3):
-        print(len(s1), len(s2), len(s3))
-        print(s1)
-        print(s2)
-        print(s3)
+    def _compute_analogies(self, s1, s2, s3, adds):
         result = []
+        prod_idx = 0
         for i in range(len(s1)):
-            result_word = self.model.predict_word(s1[i], s2[i], s3[i])
-            result.append(result_word)
+            prod = adds[prod_idx]
+            if len(prod.left) == 0:
+                result.append(prod.right)
+            else:
+                result_word = self.model.predict_word(s1[i], s2[i], s3[i])
+                result.append(result_word)
         return result
 
     def _get_first(self, t, s):
         rt = [x.reverse() for x in t]
         res1 = []
         tid = 0
+        # print([str(x) for x in rt])
         for g in s:
             l, h = 0, 0
             x = []
-            while h <= len(g):
-                trans = rt[tid]
-                while not trans.matches(g[l:h]):
-                    h += 1
-                r = trans.transform(g[l:h])
-                x.append(r[1][0])
-                tid += 1
-                l = h
+            try:
+                while h <= len(g):
+                    trans = rt[tid]
+                    while len(trans.left) == 0:
+                        tid += 1
+                        trans = rt[tid]
+                    while not trans.matches(g[l:h]) and h <= len(g):
+                        h += 1
+                    r = trans.transform(g[l:h])
+                    x.append(r[1][0])
+                    tid += 1
+                    l = h
+            except Exception:
+                pass
             res1.append(x)
         return res1
 
@@ -85,7 +92,6 @@ class AnalogyCalculator:
             while not t[idx].matches(s[sl:sh]):
                 sh += 1
             transformed.append(t[idx].transform(s[sl:sh])[1])
-            #print(t[idx].transform(s[sl:sh])[1])
             sl = sh
             sh += 1
             idx += 1
@@ -108,15 +114,14 @@ class AnalogyCalculator:
                 idx += 1
         except IndexError:
             pass
-        res = []
-        print('dupa1')
+        s1 = []
         while len(lefts) > 0:
             if lefts[0] == s[0]:
-                res.append(lefts[0])
+                s1.append(lefts[0])
                 lefts = lefts[1:]
                 s = s[1:]
             elif len(lefts[0]) > len(s[0]):
-                res.append(lefts[0])
+                s1.append(lefts[0])
                 exp_len = len(lefts[0])
                 lefts = lefts[1:]
                 while exp_len > 0:
@@ -127,7 +132,7 @@ class AnalogyCalculator:
                         s = s[exp_len:]
                         exp_len = 0
             else:
-                res.append(s[0])
+                s1.append(s[0])
                 exp_len = len(s[0])
                 s = s[1:]
                 while exp_len > 0:
@@ -137,30 +142,33 @@ class AnalogyCalculator:
                     else:
                         lefts = lefts[exp_len:]
                         exp_len = 0
-        print(res)
-        res1 = []
+        s2 = []
         tid = 0
-        print([str(x) for x in t])
-        for g in res:
-            print('group: {} '.format(g), end=' ')
+        prods = []
+        for g in s1:
             l, h = 0, 0
             x = []
             while h <= len(g):
-                trans = t[tid]
-                print(trans)
+                try:
+                    trans = t[tid]
+                    while len(trans.left) == 0:
+                        prods.append(trans)
+                        tid += 1
+                        trans = t[tid]
+                except IndexError:
+                    break
                 while not trans.matches(g[l:h]) and h <= len(g):
                     h += 1
                 try:
                     r = trans.transform(g[l:h])
-
+                    prods.append(Transformation([r[1][0]], [r[1][0]]))
                     x.append(r[1][0])
                     tid += 1
                     l = h
                 except Exception:
                     pass
-            res1.append(x)
-        print('res1: {}'.format(res1))
-        return res1, [x[0] for x in transformed], res
+            s2.append(x)
+        return s2, s1, prods
 
     def _process_trace(self, t, reverse=False):
         l1 = len(t.trace)

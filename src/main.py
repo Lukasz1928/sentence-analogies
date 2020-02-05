@@ -23,8 +23,7 @@ def main():
     # args = parse_args()
     # sentenceA, sentenceB, sentenceC = args
 
-    model = None # WordVectorModel()
-    print('Model loaded')
+    model = WordVectorModel()
     calculator = AnalogyCalculator(model)
 
     sentenceA = "You will see the man next week."
