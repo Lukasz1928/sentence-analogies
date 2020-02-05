@@ -20,5 +20,5 @@ class WordVectorModel:
         s2_sum = sum(s2)
         s3_sum = sum(s3)
         predicted_word_vector = [s2_sum - s1_sum + s3_sum]
-        ms = self.model.most_similar(predicted_word_vector, topn=1)
-        return ms[0]
+        ms = self.model.most_similar(predicted_word_vector, topn=3)
+        return ms

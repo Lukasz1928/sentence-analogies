@@ -19,11 +19,10 @@ class AnalogyCalculator:
         # similarity_matrix = calculate_similarity_matrix(vectors_a, vectors_b)
         trace_ab = Trace.calculate_trace(a, b, self.model)
         trace_ac = Trace.calculate_trace(a, c, self.model)
-        D_length = len(b) - len(a) + len(c)
-        D = self._calculate_analogy(c, trace_ab, trace_ac, D_length)
+        D = self._calculate_analogy(c, trace_ab, trace_ac)
         return D
 
-    def _calculate_analogy(self, s3, trace1, trace2, expected_length):
+    def _calculate_analogy(self, s3, trace1, trace2):
         t1 = self._process_trace(trace1)
         t2 = self._process_trace(trace2, reverse=True)
         # print([str(t) for t in t1])
@@ -39,23 +38,23 @@ class AnalogyCalculator:
     def _transform_sentences(self, t1, t2, s3):
         d = self._transform_sentence(t2, s3)
         s2, s1, prods = self._transform_grouped_sentence(t1, d)
-        print('s1: {}'.format(s1))
-        print('s2: {}'.format(s2))
-        print('prods: {}'.format([str(x) for x in prods]))
         s3 = self._get_first(t2, s1)
-        print('s3: {}'.format(s3))
         return s1, s2, s3, prods
 
     def _compute_analogies(self, s1, s2, s3, adds):
         result = []
         prod_idx = 0
-        for i in range(len(s1)):
+        i = 0
+        while i < len(s1):
             prod = adds[prod_idx]
+            prod_idx += 1
             if len(prod.left) == 0:
-                result.append(prod.right)
+                result.extend([[x] for x in prod.right])
             else:
-                result_word = self.model.predict_word(s1[i], s2[i], s3[i])
-                result.append(result_word)
+                result_words = [x[0] for x in self.model.predict_word(s1[i], s2[i], s3[i])]
+                result.append(result_words)
+                i += 1
+        print(result)
         return result
 
     def _get_first(self, t, s):
