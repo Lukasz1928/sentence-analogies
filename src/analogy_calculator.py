@@ -41,7 +41,6 @@ class AnalogyCalculator:
                 result_words = [x[0] for x in self.model.predict_word(s1[i], s2[i], s3[i])]
                 result.append(result_words)
                 i += 1
-        print(result)
         return result
 
     def _get_first(self, t, s):
@@ -72,7 +71,6 @@ class AnalogyCalculator:
         idx = 0
         sl, sh = 0, 1
         transformed = []
-
         while sh <= len(s):
             while not t[idx].matches(s[sl:sh]):
                 sh += 1

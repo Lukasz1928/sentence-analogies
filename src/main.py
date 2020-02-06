@@ -5,12 +5,7 @@ from model import WordVectorModel
 def main():
     model = WordVectorModel()
     calculator = AnalogyCalculator(model)
-
-    a = "You will see the man tomorrow."
-    b = "I saw the woman yesterday."
-    c = "You will meet the King next week."
-    d = calculator.find_analogy(a, b, c)
-    print(d)
+    print('model loaded')
 
     a = "You will see the man next week."
     b = "I saw the woman last week."

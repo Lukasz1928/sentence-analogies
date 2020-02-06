@@ -6,18 +6,15 @@ class Transformation:
         self.right = right
 
     def matches(self, s):
-        #print('matches {} {}'.format(s, self.left))
         if all([type(x) is str for x in s]):
             return s == self.left
         flat_list = [item for sublist in s for item in (sublist if type(sublist) is list else [sublist])]
         return flat_list == self.left
 
     def transform(self, s):
-        #print('trying to transform: {} with {} -> {}'.format(s, self.left, self.right), end='')
         if self.matches(s):
-            #print(' OK')
             return self.left, self.right
-        raise Exception("DUPA")
+        raise Exception()
 
     def reverse(self):
         return Transformation(self.right, self.left)
