@@ -11,12 +11,6 @@ class AnalogyCalculator:
         a = tokenize_sentence(A.lower())
         b = tokenize_sentence(B.lower())
         c = tokenize_sentence(C.lower())
-        # print(a)
-        # print(b)
-        # vectors_a = self.model.get_sentence_vectors(a)
-        # vectors_b = self.model.get_sentence_vectors(b)
-        # vectors_c = self.model.get_sentence_vectors(c)
-        # similarity_matrix = calculate_similarity_matrix(vectors_a, vectors_b)
         trace_ab = Trace.calculate_trace(a, b, self.model)
         trace_ac = Trace.calculate_trace(a, c, self.model)
         D = self._calculate_analogy(c, trace_ab, trace_ac)
@@ -25,14 +19,7 @@ class AnalogyCalculator:
     def _calculate_analogy(self, s3, trace1, trace2):
         t1 = self._process_trace(trace1)
         t2 = self._process_trace(trace2, reverse=True)
-        # print([str(t) for t in t1])
-        # print([str(t) for t in t2])
-        # print()
         s1, s2, s3, adds = self._transform_sentences(t1, t2, s3)
-        # print(s1)
-        # print(s2)
-        # print(s3)
-        # exit()
         return self._compute_analogies(s1, s2, s3, adds)
 
     def _transform_sentences(self, t1, t2, s3):
@@ -61,7 +48,6 @@ class AnalogyCalculator:
         rt = [x.reverse() for x in t]
         res1 = []
         tid = 0
-        # print([str(x) for x in rt])
         for g in s:
             l, h = 0, 0
             x = []
